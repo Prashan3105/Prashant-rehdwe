@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Chroma Flow: Ultimate Sort</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+      body {
+        font-family: 'Fredoka', sans-serif;
+        background-color: #1a1a1a;
+        color: white;
+        overflow: hidden;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+      ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+
+      body.hide-ui .glass-panel, 
+      body.hide-ui button,
+      body.hide-ui .fixed { display: none !important; }
+      
+      .glass-panel {
+        background: rgba(20, 20, 25, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+
+      .btn-shimmer { position: relative; overflow: hidden; }
+      .btn-shimmer::after {
+        content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+        transform: skewX(-25deg); animation: shimmer-pass 3s infinite;
+      }
+      @keyframes shimmer-pass { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+      @keyframes wave-flow { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+      @keyframes liquid-swell-entry {
+        0% { transform: scaleY(1); } 30% { transform: scaleY(1.08); } 
+        60% { transform: scaleY(0.96); } 85% { transform: scaleY(1.02); } 100% { transform: scaleY(1); }
+      }
+      @keyframes wave-surge { 0% { transform: scale(1); } 50% { transform: scale(1.15, 1.3); } 100% { transform: scale(1); } }
+      @keyframes surface-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15%); } }
+      @keyframes caustic-move { 0% { background-position: 0% 0%; opacity: 0.15; } 50% { opacity: 0.35; } 100% { background-position: 50% 50%; opacity: 0.15; } }
+      @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
+      @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } }
+      @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes float-selected { 0%, 100% { transform: translateY(-20px) scale(1.1); } 50% { transform: translateY(-30px) scale(1.1); } }
+      @keyframes glow-pulse { 0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); } 50% { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); } }
+      
+      .glow-solved { animation: glow-pulse 2s infinite; }
+      .glass-tube-overlay { background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 20%, rgba(255,255,255,0) 80%, rgba(255,255,255,0.1) 100%); }
+      .particle { position: absolute; bottom: -20px; background: white; border-radius: 50%; opacity: 0; animation: floatUp linear infinite; }
+      .star { position: absolute; background: white; border-radius: 50%; animation: twinkle ease-in-out infinite; }
+      .sunburst {
+        position: absolute; top: 50%; left: 50%; width: 200vmax; height: 200vmax;
+        background: repeating-conic-gradient(rgba(255, 255, 255, 0.1) 0deg 15deg, transparent 15deg 30deg);
+        transform: translate(-50%, -50%); animation: spin-slow 20s linear infinite; pointer-events: none; z-index: -1;
+      }
+      .animate-wave-front { animation: wave-flow 1.5s linear infinite; }
+      .animate-wave-back { animation: wave-flow 2.5s linear infinite reverse; }
+      .animate-surface-bob { animation: surface-bob 2s ease-in-out infinite; }
+      .animate-caustic { animation: caustic-move 3s linear infinite; }
+      .animate-float-selected { animation: float-selected 2s ease-in-out infinite; z-index: 30; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.5)); }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "canvas-confetti": "https://aistudiocdn.com/canvas-confetti@^1.9.4",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
