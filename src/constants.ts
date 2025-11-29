@@ -5,6 +5,15 @@ export const COLORS = [
   '#84cc16', '#6366f1', '#14b8a6', '#d946ef', '#cbd5e1', '#854d0e', '#9f1239', '#1e40af',
 ];
 
+// --- ADMOB CONFIGURATION ---
+// REPLACE THESE WITH YOUR REAL IDS FROM GOOGLE ADMOB DASHBOARD
+export const ADMOB_IDS = {
+  // Test IDs provided by Google (Safe for development)
+  banner: 'ca-app-pub-3940256099942544/6300978111', 
+  interstitial: 'ca-app-pub-3940256099942544/1033173712',
+  rewarded: 'ca-app-pub-3940256099942544/5224354917',
+};
+
 export const THEMES: Theme[] = [
   { id: 'default_dark', name: 'Midnight', background: 'linear-gradient(to bottom, #0f172a, #1e293b)', tubeStyle: 'glass', ballStyle: 'gradient', containerShape: 'tube', price: 0 },
   { id: 'neon_city', name: 'Cyberpunk', background: 'linear-gradient(to bottom right, #2e022d, #0f172a)', tubeStyle: 'neon', ballStyle: 'solid', containerShape: 'flask', price: 500 },

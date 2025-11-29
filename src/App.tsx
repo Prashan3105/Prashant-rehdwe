@@ -4,6 +4,7 @@ import { GameMode, Screen, PlayerProgress, Theme, DailyMission } from './types';
 import { INITIAL_PROGRESS, THEMES, MISSION_TEMPLATES } from './constants';
 import { loadProgress, saveProgress } from './services/storageService';
 import { playBackgroundMusic, stopBackgroundMusic, initAudio } from './services/audioService';
+import { initAdMob, hideBanner } from './services/admobService'; // Import AdMob
 import Game from './components/Game';
 import Shop from './components/Shop';
 import Leaderboard from './components/Leaderboard';
@@ -50,6 +51,9 @@ const App: React.FC = () => {
   const [particles, setParticles] = useState<{id: number, x: number, y: number}[]>([]);
 
   useEffect(() => {
+    // Init AdMob
+    initAdMob();
+
     const today = new Date().toISOString().split('T')[0];
     if (progress.missionDate !== today || progress.activeMissions.length === 0) {
         const newMissions: DailyMission[] = [];
@@ -63,6 +67,13 @@ const App: React.FC = () => {
     }
     if (progress.lastClaimedDate !== today) setShowDailyReward(true);
   }, []);
+
+  // Handle banner visibility
+  useEffect(() => {
+      if (screen !== Screen.GAME) {
+          hideBanner();
+      }
+  }, [screen]);
 
   useEffect(() => { progress.settings.music ? playBackgroundMusic(true) : playBackgroundMusic(false); }, [progress.settings.music]);
 
